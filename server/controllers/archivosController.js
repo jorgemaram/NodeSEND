@@ -1,5 +1,6 @@
 const multer = require('multer');
 const shortid = require('shortid');
+const fs = require('fs');
 
 exports.subirArchivo = async (req, res, next) => {
 
@@ -10,14 +11,13 @@ exports.subirArchivo = async (req, res, next) => {
                 cb(null, __dirname + '/../uploads')
             },
             filename: (req, file, cb) => {
-                const extension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length)
+                const extension = file.originalname.substring(file.originalname.lastIndexOf('.'), file.originalname.length);
                 cb(null, `${shortid.generate()}${extension}`);
-            }
+            },
         })
     };
 
     const upload = multer(configuracionMulter).single('archivo');
-
 
     upload(req, res, async (error) => {
         console.log(req.file);
@@ -32,5 +32,11 @@ exports.subirArchivo = async (req, res, next) => {
 }
 
 exports.eliminarArchivo = async (req, res) => {
-
+    console.log(req.archivo);
+    try {
+        fs.unlinkSync(__dirname + `/../uploads/${req.archivo}`)
+        console.log('Archivo eliminado')
+    } catch (error) {
+        console.log(error);
+    }
 }
