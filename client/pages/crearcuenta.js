@@ -1,10 +1,20 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import authContext from '../context/auth/authContext';
 
 const CrearCuenta = () => {
     
+    //Acceder al state
+    const AuthContext = useContext(authContext);
+    const {usuarioAutenticado } = AuthContext;
+
+    useEffect(() => {
+        setTimeout(() => {
+            usuarioAutenticado('Jorge')
+        }, 3000);
+    }, [])
     //Formulario y validación con formik y Yup
     const formik = useFormik({
         initialValues: {
