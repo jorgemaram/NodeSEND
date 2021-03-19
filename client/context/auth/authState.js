@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import authContext from './authContext';
 import authReducer from './authReducer';
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA} from '../../types/index';
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR} from '../../types/index';
 import clienteAxios from '../../config/axios';
 
 
@@ -9,7 +9,7 @@ const AuthState = ({ children }) => {
     
     //Definir un state inicial
     const initialState = {
-        token: '',
+        token:typeof window !== 'undefined' ? localStorage.getItem('token') : null,
         autenticado: null,
         usuario: null,
         mensaje: null
@@ -39,6 +39,28 @@ const AuthState = ({ children }) => {
         }, 3000);
     }
 
+    // Autenticar usuarios
+    const iniciarSesion = async datos => {
+        try {
+            const respuesta = await clienteAxios.post('/api/auth', datos);
+            dispatch({
+                type: LOGIN_EXITOSO,
+                payload: respuesta.data.token
+            })
+        } catch (error) {
+            dispatch({
+                type: LOGIN_ERROR,
+                payload: error.response.data.msg
+            })
+        }
+        //Limpia la alerta después de 3 segundos
+        setTimeout(() => {
+            dispatch({
+                type: LIMPIAR_ALERTA
+            })
+        }, 3000);
+    }
+
     //Usuario autenticado
     const usuarioAutenticado = nombre => {
         dispatch({
@@ -54,7 +76,8 @@ const AuthState = ({ children }) => {
             usuario: state.usuario,
             mensaje: state.mensaje,
             usuarioAutenticado,
-            registrarUsuario
+            registrarUsuario,
+            iniciarSesion
         }}>
             {children}
         </authContext.Provider>

@@ -1,9 +1,25 @@
-import React from 'react';
+import React, { useContext, useEffect} from 'react';
 import Layout from '../components/Layout';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
+import authContext from '../context/auth/authContext';
+import Alerta from '../components/Alerta';
+import {useRouter } from 'next/router';
 
 const Login = () => {
+
+    //Definir el context
+    const AuthContext = useContext(authContext);
+    const { mensaje, autenticado, iniciarSesion } = AuthContext;
+
+    //Next router
+    const router = useRouter();
+
+    useEffect(() => {
+        if (autenticado) {
+            router.push('/');
+        }
+    }, [autenticado]);
 
     //Formulario y validación con formik y Yup
     const formik = useFormik({
@@ -16,7 +32,7 @@ const Login = () => {
             password: Yup.string().required('Introduce tu contraseña')
         }),
         onSubmit: valores => {
-            console.log(valores)
+            iniciarSesion(valores)
         }
     })
 
@@ -24,6 +40,7 @@ const Login = () => {
         <Layout>
             <div className="md:w-4/5 xl:w-3/5 mx-auto mb-32">
                 <h2 className="text-4xl font-sans font-bold text-gray-800 text-center my-4">Iniciar sesión</h2>
+                {mensaje && <Alerta />}
                 <div className='flex justify-center mt-5'>
                     <div className="max-w-lg w-full">
                         <form className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4" onSubmit={formik.handleSubmit}>
