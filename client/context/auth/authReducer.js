@@ -1,4 +1,4 @@
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR } from '../../types/index';
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
 
 export default (state, action) => {
     switch (action.type) {
@@ -20,6 +20,20 @@ export default (state, action) => {
             return {
                 ...state,
                 mensaje: null
+            }
+        case USUARIO_AUTENTICADO:
+            return {
+                ...state,
+                usuario: action.payload
+            }
+        case CERRAR_SESION:
+            localStorage.removeItem('token');
+            return {
+                ...state,
+                usuario: null,
+                token: null,
+                autenticado: null,
+
             }
         default: return state;
     }

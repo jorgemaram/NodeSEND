@@ -1,15 +1,16 @@
 import React, { useReducer } from 'react';
 import authContext from './authContext';
 import authReducer from './authReducer';
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR} from '../../types/index';
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
 import clienteAxios from '../../config/axios';
+import tokenAuth from '../../config/tokenAuth';
 
 
 const AuthState = ({ children }) => {
-    
+
     //Definir un state inicial
     const initialState = {
-        token:typeof window !== 'undefined' ? localStorage.getItem('token') : null,
+        token: typeof window !== 'undefined' ? localStorage.getItem('token') : null,
         autenticado: null,
         usuario: null,
         mensaje: null
@@ -61,11 +62,30 @@ const AuthState = ({ children }) => {
         }, 3000);
     }
 
-    //Usuario autenticado
-    const usuarioAutenticado = nombre => {
+    //Retornar usuario autenticado en base al JWT
+    const usuarioAutenticado = async () => {
+        const token = localStorage.getItem('token');
+        if (token) {
+            tokenAuth(token)
+        }
+        try {
+            const respuesta = await clienteAxios.get('/api/auth');
+            dispatch({
+                type: USUARIO_AUTENTICADO,
+                payload: respuesta.data.usuario
+            })
+        } catch (error) {
+            dispatch({
+                type: LOGIN_ERROR,
+                payload: error.response.data.msg
+            })
+        }
+    }
+
+    //Cerrar sesión
+    const cerrarSesion = () => {
         dispatch({
-            type: USUARIO_AUTENTICADO,
-            payload: nombre
+            type: CERRAR_SESION
         })
     }
 
@@ -77,11 +97,12 @@ const AuthState = ({ children }) => {
             mensaje: state.mensaje,
             usuarioAutenticado,
             registrarUsuario,
-            iniciarSesion
+            iniciarSesion,
+            cerrarSesion
         }}>
             {children}
         </authContext.Provider>
-     );
+    );
 }
- 
+
 export default AuthState;
