@@ -1,4 +1,4 @@
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, OCULTAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
 
 export default (state, action) => {
     switch (action.type) {
@@ -16,7 +16,7 @@ export default (state, action) => {
                 token: action.payload,
                 autenticado: true
             }
-        case LIMPIAR_ALERTA:
+        case OCULTAR_ALERTA:
             return {
                 ...state,
                 mensaje: null

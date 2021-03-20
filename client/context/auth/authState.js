@@ -1,7 +1,7 @@
 import React, { useReducer } from 'react';
 import authContext from './authContext';
 import authReducer from './authReducer';
-import { REGISTRO_EXITOSO, REGISTRO_ERROR, LIMPIAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
+import { REGISTRO_EXITOSO, REGISTRO_ERROR, OCULTAR_ALERTA, LOGIN_EXITOSO, LOGIN_ERROR, USUARIO_AUTENTICADO, CERRAR_SESION } from '../../types/index';
 import clienteAxios from '../../config/axios';
 import tokenAuth from '../../config/tokenAuth';
 
@@ -35,7 +35,7 @@ const AuthState = ({ children }) => {
         //Limpia la alerta después de 3 segundos
         setTimeout(() => {
             dispatch({
-                type: LIMPIAR_ALERTA
+                type: OCULTAR_ALERTA
             })
         }, 3000);
     }
@@ -57,7 +57,7 @@ const AuthState = ({ children }) => {
         //Limpia la alerta después de 3 segundos
         setTimeout(() => {
             dispatch({
-                type: LIMPIAR_ALERTA
+                type: OCULTAR_ALERTA
             })
         }, 3000);
     }
