@@ -19,8 +19,14 @@ router.get('/',
 )
 
 router.get('/:url',
+    enlacesController.tienePassword,
     enlacesController.obtenerEnlace,
     archivosController.eliminarArchivo,
+)
+
+router.post('/:url',
+    enlacesController.verificarPassword
+
 )
 
 module.exports = router;

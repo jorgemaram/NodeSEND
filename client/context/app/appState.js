@@ -1,5 +1,5 @@
 import React, { useReducer } from 'react';
-import { MOSTRAR_ALERTA, OCULTAR_ALERTA, SUBIR_ARCHIVO_EXITO, SUBIR_ARCHIVO_ERROR, SUBIR_ARCHIVO, SUBIR_ENLACE_ERROR, CREAR_ENLACE_EXITO, CREAR_ENLACE_ERROR, LIMPIAR_STATE } from '../../types';
+import { MOSTRAR_ALERTA, OCULTAR_ALERTA, SUBIR_ARCHIVO_EXITO, SUBIR_ARCHIVO_ERROR, SUBIR_ARCHIVO, SUBIR_ENLACE_ERROR, CREAR_ENLACE_EXITO, CREAR_ENLACE_ERROR, LIMPIAR_STATE, AGREGAR_PASSWORD, AGREGAR_DESCARGAS } from '../../types';
 import appContext from './appContext';
 import appReducer from './appReducer';
 import clienteAxios from '../../config/axios';
@@ -19,7 +19,7 @@ const AppState = ({ children }) => {
 
     //crear dispatch y state
     const [state, dispatch] = useReducer(appReducer, initialState)
-    
+
     //Muestra una alerta
     const mostrarAlerta = msg => {
         console.log(msg)
@@ -31,7 +31,7 @@ const AppState = ({ children }) => {
             dispatch({
                 type: OCULTAR_ALERTA
             })
-        },4000)
+        }, 4000)
     }
 
     //Sube los archivos al servidor
@@ -81,7 +81,23 @@ const AppState = ({ children }) => {
 
     const limpiarState = () => {
         dispatch({
-            type:LIMPIAR_STATE
+            type: LIMPIAR_STATE
+        })
+    }
+
+    //Añadir el password
+    const agregarPassword = password => {
+        dispatch({
+            type: AGREGAR_PASSWORD,
+            payload: password
+        })
+    }
+
+    // agrega un número de descargas
+    const agregarDescargas = descargas => {
+        dispatch({
+            type: AGREGAR_DESCARGAS,
+            payload: descargas
         })
     }
 
@@ -98,11 +114,13 @@ const AppState = ({ children }) => {
             mostrarAlerta,
             subirArchivo,
             crearEnlace,
-            limpiarState
+            limpiarState,
+            agregarPassword,
+            agregarDescargas
         }}>
             {children}
         </appContext.Provider>
-     );
+    );
 }
- 
+
 export default AppState;
