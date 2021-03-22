@@ -1,6 +1,9 @@
+import React, { useState, useContext } from 'react';
 import Layout from '../../components/Layout';
+import Alerta from '../../components/Alerta';
 import clienteAxios from '../../config/axios';
-import React, { useState } from 'react';
+import appContext from '../../context/app/appContext';
+
 
 export async function getServerSideProps({ params }) {
     const { enlace } = params;
@@ -26,16 +29,28 @@ export async function getServerSidePaths() {
 }
 
 export default ({ enlace }) => {
+
+    const AppContext = useContext(appContext);
+    const { mostrarAlerta, mensaje_archivo } = AppContext;
+
     const [tienePassword, setTienePassword] = useState(enlace.password)
     const [password, setPassword] = useState('')
     console.log(tienePassword)
 
-    const verificarPassword = e => {
+    const verificarPassword = async e => {
         e.preventDefault();
 
-        const resultado = clienteAxios.post(`/api/enlaces/${enlace.enlace}`)
+        const data = {
+            password
+        }
 
-        console.log(resultado)
+        try {
+            const resultado = await clienteAxios.post(`/api/enlaces/${enlace.enlace}`, data)
+            setTienePassword(resultado.data.password);
+        } catch (error) {
+            mostrarAlerta(error.response.data.msg)
+        }
+
     }
 
     return (
@@ -43,12 +58,13 @@ export default ({ enlace }) => {
             {tienePassword ? (
                 <>
                     <p className="text-center">Este enlace está protegido por una contraseña, introdúcelo a continuación</p>
+                    {mensaje_archivo && <Alerta />}
                     <div className='flex justify-center mt-5'>
                         <div className="max-w-lg w-full">
                             <form className="bg-white rounded shadow-md px-8 pt-6 pb-8 mb-4" onSubmit={e => verificarPassword(e)}>
                                 <div className="mb-4">
                                     <label className="block text-black text-sm font-bold mb-2" htmlFor="password">Contraseña</label>
-                                    <input type="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" placeholder="Contraseña del archivo" value={password} onChange={ e => setPassword(e.target.value)/>
+                                    <input type="password" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="password" placeholder="Contraseña del archivo" value={password} onChange={e => setPassword(e.target.value)} />
                                 </div>
                                 <input type="submit" className="bg-red-500 hover:bg-gray-900 w-full p-2 text-white uppercase font-bold" value="Validar password" />
                             </form>

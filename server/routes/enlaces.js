@@ -25,7 +25,8 @@ router.get('/:url',
 )
 
 router.post('/:url',
-    enlacesController.verificarPassword
+    enlacesController.verificarPassword,
+    enlacesController.obtenerEnlace
 
 )
 
